@@ -13,8 +13,9 @@ Expense Tracker is a simple application built with Flutter to help you keep trac
 
 To use this application, follow these steps:
 
-1. Clone this repository to your local machine.
-2. Ensure you have Flutter installed. If not, follow the [installation instructions](https://flutter.dev/docs/get-started/install).
+1. Clone this repository to your local machine
+   ```
+   git clone git@github.com:salemwhd/Expense-tacker.git
 3. Open the project in your preferred IDE.
 4. Run the app on an emulator or physical device.
 
