@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tacker/model/expense.dart';
-import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class NewExpense extends StatefulWidget {
   const NewExpense({required this.onAddExpense, super.key});
@@ -94,16 +94,17 @@ class _NewExpenseState extends State<NewExpense> {
   }
 
   Future<File> _getLocalFile() async {
-    final directory = Directory.current;
-    final filePath = path.join(directory.path, 'expenses.txt');
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/expenses.txt';
     return File(filePath);
   }
 
-  Future<File> _saveExpenseToFile(Expense expense) async {
-    final file = await _getLocalFile();
-    final text =
+  Future<void> _saveExpenseToFile(Expense expense) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/expenses.txt');
+    final expenseData =
         '${expense.title},${expense.amount},${expense.date},${expense.category}\n';
-    return file.writeAsString(text, mode: FileMode.append);
+    await file.writeAsString(expenseData, mode: FileMode.append);
   }
 
   @override

@@ -5,7 +5,7 @@ import 'package:expense_tacker/widget/expenses_list/expenses_list.dart';
 import 'package:expense_tacker/widget/new_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tacker/model/expense.dart';
-import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -16,6 +16,13 @@ class Expenses extends StatefulWidget {
 
 class _ExpensesState extends State<Expenses> {
   final List<Expense> _regersteredExpense = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadExpenses().then((_) {
+      setState(() {});
+    });
+  }
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
@@ -29,25 +36,33 @@ class _ExpensesState extends State<Expenses> {
   }
 
   Future<File> _getLocalFile() async {
-    final directory = Directory.current;
-    final filePath = path.join(directory.path, 'expenses.txt');
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/expenses.txt';
     return File(filePath);
   }
 
   Future<void> _loadExpenses() async {
     final file = await _getLocalFile();
+
     if (await file.exists()) {
+      final contents = await file.readAsString();
+      print('File contents: $contents');
       final lines = await file.readAsLines();
       for (var line in lines) {
         final parts = line.split(',');
+
         final title = parts[0];
         final amount = double.parse(parts[1]);
         final date = DateTime.parse(parts[2]);
-         final category = Category.values.firstWhere((e) => e.toString() == 'Category.$parts[3]');
+        final category = Category.values.firstWhere(
+          (e) => e.toString() == parts[3],
+        );
         final expense = Expense(
             title: title, amount: amount, date: date, category: category);
         _regersteredExpense.add(expense);
       }
+    } else {
+      print(file);
     }
   }
 
